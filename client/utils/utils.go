@@ -22,13 +22,19 @@ type Paquete struct {
 
 func IniciarConfiguracion(filePath string) *globals.Config {
 	var config *globals.Config
+	// configFile: Archivo abierto
+	// err: error en caso de existir
 	configFile, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+	// Cerrar el archivo automaticamente cuando la funcion termine
 	defer configFile.Close()
 
+	// Decodificador de Json que va a leer el archivo abierto
 	jsonParser := json.NewDecoder(configFile)
+	// Inicializa el Config que esta en la direccion de memoria de config
+	// Guarda el resultado del parseo en esa direccion
 	jsonParser.Decode(&config)
 
 	return config
@@ -42,12 +48,21 @@ func LeerConsola() {
 	log.Print(text)
 }
 
-func GenerarYEnviarPaquete() {
+func GenerarYEnviarPaquete(ip string, puerto int){
 	paquete := Paquete{}
 	// Leemos y cargamos el paquete
-
-	log.Printf("paqute a enviar: %+v", paquete)
-	// Enviamos el paqute
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		text, _ := reader.ReadString('\n')
+		if text == "\r\n" || text == "\n" {
+			// Corta cuando lee un enter
+			break
+		}
+		paquete.Valores = append(paquete.Valores, text)
+	}
+	log.Printf("paquete a enviar: %+v", paquete)
+	// Enviamos el paquete
+	EnviarPaquete(ip, puerto, paquete)
 }
 
 func EnviarMensaje(ip string, puerto int, mensajeTxt string) {

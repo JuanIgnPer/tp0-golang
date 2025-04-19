@@ -6,4 +6,6 @@ type Config struct {
 	Mensaje string `json:"mensaje"`
 }
 
+// Defino variable global, puntero a UN Config. 
+// Es decir la direccion de memoria no el objeto en si
 var ClientConfig *Config
